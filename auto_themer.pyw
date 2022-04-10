@@ -16,7 +16,7 @@ switch = 'auto'
 def sunrise():
 
     if switch == 'auto':
-        return str(sun.get_local_sunrise_time().hour)
+        return sun.get_local_sunrise_time().hour
     else:
         return 9  # Desired timme ONLY HOUR
 
