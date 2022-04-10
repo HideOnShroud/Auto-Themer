@@ -53,7 +53,7 @@ def rainmeter_skin():
 
 
 # If you don't have Rainmeter please comment out line 73
-class Schduler_job():
+class SchdulerJob:
 
     def main_job(self):
 
@@ -85,7 +85,7 @@ class Schduler_job():
 
 def main():
 
-    run = Schduler_job()
+    run = SchdulerJob()
     run.main_job()
     run.run_job()
 
