@@ -1,6 +1,6 @@
 ![🌗Auto_Themer (2)](https://user-images.githubusercontent.com/93008528/162167270-ebfc6ada-8617-4b65-b901-14b7b4e87541.png)
 
-![version](https://img.shields.io/badge/version-v1.0.0-blue) ![GitHubLicense](https://img.shields.io/github/license/BeefyBento/Auto-Themer)
+![version](https://img.shields.io/badge/version-v1.0.1-blue) ![GitHubLicense](https://img.shields.io/github/license/BeefyBento/Auto-Themer)
 
 Dark and Light mode switcher for windows with rainmeter support.
 
