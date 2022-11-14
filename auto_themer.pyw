@@ -4,14 +4,13 @@ import schedule
 import sys
 from suntime import Sun
 
-
-# switch = 'auto' for sunrise/sunset. switch = 'custom' for custom
-switch = 'auto'
-
 # Input your location
 latitude = 41.7151
 longitude = 44.8271
 sun = Sun(latitude, longitude)
+
+# switch = 'auto' for sunrise/sunset. switch = 'custom' for custom
+switch = 'auto'
 
 
 def sunrise():
@@ -39,7 +38,7 @@ def get_file_path():
 def day_or_night():
 
     # Change sunset() and sunrise() into integers for static time.
-    if time.localtime().tm_hour >= sunset() or time.localtime().tm_hour <= sunrise():
+    if time.localtime().tm_hour >= sunset() or time.localtime().tm_hour < sunrise():
         return '0'
     else:
         return '1'
@@ -54,34 +53,45 @@ def rainmeter_skin():
         return 'LM1'  # Layout name
 
 
-def job():
+# If you don't have Rainmeter please comment out line 74
+class SchdulerJob:
 
-    command = ['reg.exe', 'add', 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize', '/v',
-               'AppsUseLightTheme', '/t', 'REG_DWORD', '/d', day_or_night(), '/f']
+    def main_job(self):
 
-    command2 = ['reg.exe', 'add', 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize', '/v',
-                'SystemUsesLightTheme', '/t', 'REG_DWORD', '/d', day_or_night(), '/f']
+        command = ['reg.exe', 'add', 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize', '/v',
+                   'AppsUseLightTheme', '/t', 'REG_DWORD', '/d', day_or_night(), '/f']
 
-    command3 = ["C:\Program Files\Rainmeter\Rainmeter.exe", "!LoadLayout", rainmeter_skin()]  # Rainmeter Option
+        command2 = ['reg.exe', 'add', 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize', '/v',
+                    'SystemUsesLightTheme', '/t', 'REG_DWORD', '/d', day_or_night(), '/f']
 
-    command4 = ['reg.exe', 'add', 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run', '/v', 'Auto_themer', '/t',
-                'REG_SZ', '/d', get_file_path(), '/f']
-    
-    subprocess.run(command)
-    subprocess.run(command2)
-    subprocess.call(command3)  # Rainmeter option
-    subprocess.call(command4)
+        command3 = ["C:\Program Files\Rainmeter\Rainmeter.exe", "!LoadLayout", rainmeter_skin()]  # Rainmeter Option
+
+        command4 = ['reg.exe', 'add', 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run', '/v', 'AutoThemer', '/t',
+                    'REG_SZ', '/d', get_file_path(), '/f']
+
+        subprocess.run(command)
+        subprocess.run(command2)
+        subprocess.call(command3)  # Rainmeter option
+        subprocess.call(command4)
+
+
+    def run_job(self):
+        if sunrise() >= 10:
+            schedule.every().day.at(f"{sunrise()}:00").do(self.main_job)
+        else:
+            schedule.every().day.at(f"0{sunrise()}:00").do(self.main_job)
+        schedule.every().day.at(f"{sunset()}:00").do(self.main_job)
+
+        while True:
+            schedule.run_pending()
+            time.sleep(10)
 
 
 def main():
 
-    job()
-    schedule.every().day.at(f"0{sunrise()}:00").do(job)
-    schedule.every().day.at(f"{sunset()}:00").do(job)
-
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+    run = SchdulerJob()
+    run.main_job()
+    run.run_job()
 
 
 if __name__ == '__main__':
